@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Votação FONACON</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <!-- Chart.js for Admin Dashboard optional stats -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast hidden"></div>
+
+    <!-- Login Screen -->
+    <div id="login-view" class="view active">
+        <div class="login-container">
+            <div class="login-header">
+                <h2>FONACON</h2>
+                <p>Sistema Institucional de Votação</p>
+            </div>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="email">E-mail Institucional</label>
+                    <input type="email" id="email" required placeholder="Digite seu e-mail">
+                </div>
+                <div class="form-group">
+                    <label for="senha">Senha</label>
+                    <input type="password" id="senha" required placeholder="Digite sua senha">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+                <a href="#" class="forgot-password"
+                    onclick="alert('Funcionalidade de recuperação em desenvolvimento.')">Esqueci minha senha</a>
+            </form>
+        </div>
+    </div>
+
+    <!-- App View (Shared Layout) -->
+    <div id="app-view" class="view hidden">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h3>FONACON</h3>
+                <span id="userRoleBadge" class="badge">Membro</span>
+            </div>
+            <nav class="sidebar-nav" id="sidebarNav">
+                <!-- Dynamically populated based on role -->
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="avatar" id="userAvatar">A</div>
+                    <span id="userName">Usuário logado</span>
+                </div>
+                <button id="logoutBtn" class="btn btn-logout">Sair</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <h1 id="pageTitle">Dashboard</h1>
+                <!-- For Admin: Action button -->
+                <div id="topbarActions"></div>
+            </header>
+
+            <div id="contentArea" class="content-area">
+                <!-- Dynamic Content Loads Here -->
+            </div>
+        </main>
+    </div>
+
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
