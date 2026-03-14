@@ -1,8 +1,8 @@
 /* --- Design Variables --- */
 :root {
-    --primary-blue: #0A1B3F;
-    --accent-yellow: #D9B34A;
-    --secondary-green: #2B7A5C;
+    --primary-blue: #12146E;    /* Marinho da logo FONACON */
+    --accent-yellow: #EEBC51;   /* Amarelo/Dourado da logo FONACON */
+    --secondary-green: #498857; /* Verde da logo FONACON */
     --bg-light: #F4F7FC;
     --text-main: #333333;
     --text-muted: #666666;
