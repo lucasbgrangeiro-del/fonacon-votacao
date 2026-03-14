@@ -1,4 +1,4 @@
-// app.js - Lógica Principal do Sistema FONACON
+﻿// app.js - LÃ³gica Principal do Sistema FONACON
 // Utiliza Firebase Realtime Database V9 Compat
 
 // Estado Global
@@ -28,7 +28,7 @@ function showToast(msg, type = 'success') {
 }
 
 // ==========================================
-// MOCK DATA DE INITIALIZAÇÃO
+// MOCK DATA DE INITIALIZAÃ‡ÃƒO
 // ==========================================
 async function seedDatabase() {
     const usersRef = db.ref('users');
@@ -46,7 +46,7 @@ async function seedDatabase() {
 
             // Criar Membros
             db.ref('users/membro_1').set({
-                nome: 'João da Silva (Procurador)',
+                nome: 'JoÃ£o da Silva (Procurador)',
                 email: 'joao@fonacon.com.br',
                 senha: '123',
                 perfil: 'Membro'
@@ -63,7 +63,7 @@ async function seedDatabase() {
             const newDocRef = db.ref('documents').push();
             newDocRef.set({
                 titulo: 'Enunciado 01/2026 - Uso de IA',
-                conteudo: 'Proposta: O uso de Inteligência Artificial para elaboração de peças processuais deve ser precedido de validação humana e seguir diretrizes de segurança da informação institucional.',
+                conteudo: 'Proposta: O uso de InteligÃªncia Artificial para elaboraÃ§Ã£o de peÃ§as processuais deve ser precedido de validaÃ§Ã£o humana e seguir diretrizes de seguranÃ§a da informaÃ§Ã£o institucional.',
                 status: 'Ativo',
                 data_criacao: firebase.database.ServerValue.TIMESTAMP
             });
@@ -75,7 +75,7 @@ seedDatabase().catch(err => console.error("Erro no Seed:", err));
 
 
 // ==========================================
-// AUTENTICAÇÃO E ROTEAMENTO
+// AUTENTICAÃ‡ÃƒO E ROTEAMENTO
 // ==========================================
 loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -98,7 +98,7 @@ loginForm.addEventListener('submit', async (e) => {
                 initApp();
                 showToast('Login realizado com sucesso!');
             } else {
-                showToast('E-mail ou senha inválidos!', 'error');
+                showToast('E-mail ou senha invÃ¡lidos!', 'error');
             }
         });
     } catch (error) {
@@ -134,14 +134,14 @@ function buildMenu() {
 
     const dashboardItem = document.createElement('div');
     dashboardItem.className = 'nav-item active';
-    dashboardItem.innerHTML = '📊 Dashboard Geral';
+    dashboardItem.innerHTML = 'ðŸ“Š Dashboard Geral';
     dashboardItem.onclick = () => { setActiveMenu(dashboardItem); navigate('dashboard'); };
     sidebarNav.appendChild(dashboardItem);
 
     if (currentUser.perfil === 'Membro') {
         const docAtivosItem = document.createElement('div');
         docAtivosItem.className = 'nav-item';
-        docAtivosItem.innerHTML = '📝 Docs em Deliberação';
+        docAtivosItem.innerHTML = 'ðŸ“ Docs em DeliberaÃ§Ã£o';
         docAtivosItem.onclick = () => { setActiveMenu(docAtivosItem); navigate('docs-deliberacao'); };
         sidebarNav.appendChild(docAtivosItem);
     }
@@ -149,20 +149,20 @@ function buildMenu() {
     if (currentUser.perfil === 'Admin') {
         const gestaoItem = document.createElement('div');
         gestaoItem.className = 'nav-item';
-        gestaoItem.innerHTML = '⚙ Gestão de Documentos';
+        gestaoItem.innerHTML = 'âš™ GestÃ£o de Documentos';
         gestaoItem.onclick = () => { setActiveMenu(gestaoItem); navigate('admin-docs'); };
         sidebarNav.appendChild(gestaoItem);
 
         const membrosItem = document.createElement('div');
         membrosItem.className = 'nav-item';
-        membrosItem.innerHTML = '👥 Controle de Membros';
+        membrosItem.innerHTML = 'ðŸ‘¥ Controle de Membros';
         membrosItem.onclick = () => { setActiveMenu(membrosItem); navigate('admin-membros'); };
         sidebarNav.appendChild(membrosItem);
     }
 
     const docEncerradosItem = document.createElement('div');
     docEncerradosItem.className = 'nav-item';
-    docEncerradosItem.innerHTML = '✅ Documentos Deliberados';
+    docEncerradosItem.innerHTML = 'âœ… Documentos Deliberados';
     docEncerradosItem.onclick = () => { setActiveMenu(docEncerradosItem); navigate('docs-encerrados'); };
     sidebarNav.appendChild(docEncerradosItem);
 }
@@ -182,7 +182,7 @@ function navigate(route, params = null) {
             renderDashboard();
             break;
         case 'docs-deliberacao':
-            pageTitle.textContent = 'Documentos em Deliberação';
+            pageTitle.textContent = 'Documentos em DeliberaÃ§Ã£o';
             renderDocsDeliberacao();
             break;
         case 'votar-documento':
@@ -196,7 +196,7 @@ function navigate(route, params = null) {
             renderResultadoDocumento(params);
             break;
         case 'admin-docs':
-            pageTitle.textContent = 'Gestão de Documentos';
+            pageTitle.textContent = 'GestÃ£o de Documentos';
             renderAdminDocs();
             break;
         case 'admin-membros':
@@ -204,7 +204,7 @@ function navigate(route, params = null) {
             renderAdminMembros();
             break;
         default:
-            contentArea.innerHTML = '<h2>Página não encontrada</h2>';
+            contentArea.innerHTML = '<h2>PÃ¡gina nÃ£o encontrada</h2>';
     }
 }
 
@@ -216,9 +216,9 @@ async function renderDashboard() {
     let html = `
         <div class="welcome-card">
             <h2>Bem-vindo(a), ${currentUser.nome.split(' ')[0]}!</h2>
-            <p>Este é o ambiente virtual de votações do FONACON. Aqui você pode deliberar eletronicamente sobre os enunciados e propostas referentes ao Fórum.</p>
+            <p>Este Ã© o ambiente virtual de votaÃ§Ãµes do FONACON. Aqui vocÃª pode deliberar eletronicamente sobre os enunciados e propostas referentes ao FÃ³rum.</p>
         </div>
-        <div class="stats-grid" id="statsGrid">Carregando métricas...</div>
+        <div class="stats-grid" id="statsGrid">Carregando mÃ©tricas...</div>
     `;
     contentArea.innerHTML = html;
 
@@ -250,7 +250,7 @@ async function renderDashboard() {
                 <div class="stat-card"><div class="stat-value" style="color:var(--secondary-green)">${votosMembro}</div><div class="stat-label">Votos Realizados</div></div>
                 <div class="stat-card"><div class="stat-value">${total}</div><div class="stat-label">Total de Enunciados</div></div>
             ` : `
-                <div class="stat-card"><div class="stat-value" style="color:var(--accent-yellow)">${ativos}</div><div class="stat-label">Docs. Ativos (Em Votação)</div></div>
+                <div class="stat-card"><div class="stat-value" style="color:var(--accent-yellow)">${ativos}</div><div class="stat-label">Docs. Ativos (Em VotaÃ§Ã£o)</div></div>
                 <div class="stat-card"><div class="stat-value" style="color:var(--secondary-green)">${encerrados}</div><div class="stat-label">Docs. Encerrados</div></div>
                 <div class="stat-card"><div class="stat-value">${total}</div><div class="stat-label">Total Geral de Documentos</div></div>
             `;
@@ -258,7 +258,7 @@ async function renderDashboard() {
             document.getElementById('statsGrid').innerHTML = gridHTML;
         });
     } catch (err) {
-        document.getElementById('statsGrid').innerHTML = 'Erro ao carregar métricas.';
+        document.getElementById('statsGrid').innerHTML = 'Erro ao carregar mÃ©tricas.';
     }
 }
 
@@ -282,7 +282,7 @@ async function renderDocsDeliberacao() {
             });
 
             if (docsList.length === 0) {
-                contentArea.innerHTML = '<div style="text-align:center; padding:3rem; color:var(--text-muted)">Nenhum documento pendente de votação para você no momento. Parabéns!</div>';
+                contentArea.innerHTML = '<div style="text-align:center; padding:3rem; color:var(--text-muted)">Nenhum documento pendente de votaÃ§Ã£o para vocÃª no momento. ParabÃ©ns!</div>';
                 return;
             }
 
@@ -314,30 +314,30 @@ async function renderAreaVoto(docId) {
     try {
         db.ref('documents/' + docId).once('value', (docSnap) => {
             if (!docSnap.exists()) {
-                contentArea.innerHTML = 'Documento não encontrado.';
+                contentArea.innerHTML = 'Documento nÃ£o encontrado.';
                 return;
             }
             const data = docSnap.val();
-            pageTitle.textContent = `Votação: ${data.titulo}`;
+            pageTitle.textContent = `VotaÃ§Ã£o: ${data.titulo}`;
 
             let html = `
                 <div>
-                    <h3>Leia com atenção o inteiro teor do documento abaixo:</h3>
+                    <h3>Leia com atenÃ§Ã£o o inteiro teor do documento abaixo:</h3>
                     <div class="vote-content">${data.conteudo}</div>
 
                     <div class="vote-panel">
                         <h3 style="margin-bottom:1rem">Registre seu Voto</h3>
-                        <p style="margin-bottom:1rem; font-size:0.9rem; color:var(--text-muted)">Atenção: A escolha da opção é irreversível após o envio e contabilizada pelo seu ID de Usuário.</p>
+                        <p style="margin-bottom:1rem; font-size:0.9rem; color:var(--text-muted)">AtenÃ§Ã£o: A escolha da opÃ§Ã£o Ã© irreversÃ­vel apÃ³s o envio e contabilizada pelo seu ID de UsuÃ¡rio.</p>
                         
                         <div class="vote-actions" id="voteButtonGroup">
-                            <button class="vote-btn favoravel" data-opcao="Favorável">👍 Favorável</button>
-                            <button class="vote-btn contrario" data-opcao="Contrário">👎 Contrário</button>
-                            <button class="vote-btn ressalva" data-opcao="Ressalva">✋ Com Ressalva</button>
+                            <button class="vote-btn favoravel" data-opcao="FavorÃ¡vel">ðŸ‘ FavorÃ¡vel</button>
+                            <button class="vote-btn contrario" data-opcao="ContrÃ¡rio">ðŸ‘Ž ContrÃ¡rio</button>
+                            <button class="vote-btn ressalva" data-opcao="Ressalva">âœ‹ Com Ressalva</button>
                         </div>
 
                         <div class="justificativa-area hidden" id="justArea">
-                            <label style="display:block; margin-bottom:0.5rem; font-weight:500;">Justificativa (Obrigatória para Ressalva / Opcional para os demais)</label>
-                            <textarea id="justificativaText" rows="4" placeholder="Digite sua motivação aqui..."></textarea>
+                            <label style="display:block; margin-bottom:0.5rem; font-weight:500;">Justificativa (ObrigatÃ³ria para Ressalva / Opcional para os demais)</label>
+                            <textarea id="justificativaText" rows="4" placeholder="Digite sua motivaÃ§Ã£o aqui..."></textarea>
                         </div>
 
                         <button class="btn btn-primary btn-block" id="btnConfirmarVoto" disabled>Confirmar Meu Voto</button>
@@ -372,15 +372,15 @@ async function renderAreaVoto(docId) {
 
             btnConfirm.addEventListener('click', async () => {
                 if (selectedOption === 'Ressalva' && justText.value.trim() === '') {
-                    alert("Justificativa é obrigatória para voto com Ressalva.");
+                    alert("Justificativa Ã© obrigatÃ³ria para voto com Ressalva.");
                     return;
                 }
 
                 btnConfirm.disabled = true;
                 btnConfirm.textContent = "Processando...";
 
-                // REGRA CRÍTICA - Restrição de unicidade no Realtime Database:
-                // Ao usar o path 'votes/userId_docId', garantimos fisicamente que cada usuário crie apenas um node de voto por doc.
+                // REGRA CRÃTICA - RestriÃ§Ã£o de unicidade no Realtime Database:
+                // Ao usar o path 'votes/userId_docId', garantimos fisicamente que cada usuÃ¡rio crie apenas um node de voto por doc.
                 const voteKey = `${currentUser.id}_${docId}`;
                 const voteRef = db.ref('votes/' + voteKey);
 
@@ -405,7 +405,7 @@ async function renderAreaVoto(docId) {
                         btnConfirm.disabled = false;
                         btnConfirm.textContent = "Confirmar Meu Voto";
                     } else if (!committed) {
-                        showToast("Você já registrou um voto para este documento!", "error");
+                        showToast("VocÃª jÃ¡ registrou um voto para este documento!", "error");
                         btnConfirm.disabled = false;
                         btnConfirm.textContent = "Confirmar Meu Voto";
                     } else {
@@ -426,7 +426,7 @@ async function renderAreaVoto(docId) {
 // ==========================================
 
 async function renderDocsEncerrados() {
-    topbarActions.innerHTML = `<button class="btn btn-secondary" onclick="window.print()">🖨️ Exportar PDF</button>`;
+    topbarActions.innerHTML = `<button class="btn btn-secondary" onclick="window.print()">ðŸ–¨ï¸ Exportar PDF</button>`;
 
     try {
         db.ref('documents').once('value', (docsSnap) => {
@@ -442,10 +442,10 @@ async function renderDocsEncerrados() {
                             <div class="doc-info">
                                 <h3>${data.titulo}</h3>
                                 <div class="doc-meta">
-                                    <span class="status-badge status-encerrado">Votação Encerrada</span>
+                                    <span class="status-badge status-encerrado">VotaÃ§Ã£o Encerrada</span>
                                 </div>
                             </div>
-                            <button class="btn btn-primary" onclick="navigate('resultados-documento', '${doc.key}')">Ver Relatório Final</button>
+                            <button class="btn btn-primary" onclick="navigate('resultados-documento', '${doc.key}')">Ver RelatÃ³rio Final</button>
                         </div>
                     `;
                 }
@@ -464,7 +464,7 @@ async function renderDocsEncerrados() {
 }
 
 async function renderResultadoDocumento(docId) {
-    topbarActions.innerHTML = `<button class="btn btn-secondary" onclick="window.print()">🖨️ Imprimir Resultado</button>`;
+    topbarActions.innerHTML = `<button class="btn btn-secondary" onclick="window.print()">ðŸ–¨ï¸ Imprimir Resultado</button>`;
 
     try {
         db.ref('documents/' + docId).once('value', (docSnap) => {
@@ -472,7 +472,7 @@ async function renderResultadoDocumento(docId) {
             pageTitle.textContent = `Resultado: ${data.titulo}`;
 
             db.ref('votes').once('value', (votosSnap) => {
-                let consolidador = { 'Favorável': 0, 'Contrário': 0, 'Ressalva': 0 };
+                let consolidador = { 'FavorÃ¡vel': 0, 'ContrÃ¡rio': 0, 'Ressalva': 0 };
                 let votosList = [];
 
                 votosSnap.forEach(v => {
@@ -490,10 +490,10 @@ async function renderResultadoDocumento(docId) {
                         <h3 style="margin-bottom: 1rem;">Painel Consolidado de Votos</h3>
                         <div class="stats-grid">
                             <div class="stat-card" style="border-top: 4px solid var(--secondary-green)">
-                                <div class="stat-value" style="color:var(--secondary-green)">${consolidador['Favorável']}</div><div class="stat-label">Votos Favoráveis</div>
+                                <div class="stat-value" style="color:var(--secondary-green)">${consolidador['FavorÃ¡vel']}</div><div class="stat-label">Votos FavorÃ¡veis</div>
                             </div>
                             <div class="stat-card" style="border-top: 4px solid var(--danger)">
-                                <div class="stat-value" style="color:var(--danger)">${consolidador['Contrário']}</div><div class="stat-label">Votos Contrários</div>
+                                <div class="stat-value" style="color:var(--danger)">${consolidador['ContrÃ¡rio']}</div><div class="stat-label">Votos ContrÃ¡rios</div>
                             </div>
                             <div class="stat-card" style="border-top: 4px solid var(--accent-yellow)">
                                 <div class="stat-value" style="color:var(--accent-yellow)">${consolidador['Ressalva']}</div><div class="stat-label">Com Ressalvas</div>
@@ -521,7 +521,7 @@ async function renderResultadoDocumento(docId) {
                     html += `
                         <tr>
                             <td style="font-weight:500;">${v.nome_usuario}</td>
-                            <td><span class="badge" style="background-color: ${v.opcao === 'Favorável' ? 'var(--secondary-green)' : (v.opcao === 'Contrário' ? 'var(--danger)' : 'var(--accent-yellow)')}; color: white; padding: 0.3rem 0.6rem;">${v.opcao}</span></td>
+                            <td><span class="badge" style="background-color: ${v.opcao === 'FavorÃ¡vel' ? 'var(--secondary-green)' : (v.opcao === 'ContrÃ¡rio' ? 'var(--danger)' : 'var(--accent-yellow)')}; color: white; padding: 0.3rem 0.6rem;">${v.opcao}</span></td>
                             <td style="font-size:0.85rem; color:var(--text-muted);">${v.justificativa ? v.justificativa : '-'}</td>
                         </tr>
                     `;
@@ -543,7 +543,7 @@ async function renderAdminDocs() {
 
     try {
         db.ref('documents').once('value', (snap) => {
-            let html = '<div class="data-table-wrapper"><table class="data-table"><thead><tr><th>ID/Título</th><th>Status</th><th>Ações</th></tr></thead><tbody>';
+            let html = '<div class="data-table-wrapper"><table class="data-table"><thead><tr><th>ID/TÃ­tulo</th><th>Status</th><th>AÃ§Ãµes</th></tr></thead><tbody>';
 
             // Ordena localmente pra reverter (mais novos primeiro)
             let docsArray = [];
@@ -551,10 +551,10 @@ async function renderAdminDocs() {
             docsArray.sort((a, b) => b.data_criacao - a.data_criacao);
 
             docsArray.forEach(data => {
-                const badge = data.status === 'Ativo' ? '<span class="status-badge status-ativo">Em Votação</span>' : '<span class="status-badge status-encerrado">Encerrado</span>';
+                const badge = data.status === 'Ativo' ? '<span class="status-badge status-ativo">Em VotaÃ§Ã£o</span>' : '<span class="status-badge status-encerrado">Encerrado</span>';
                 const actionBtn = data.status === 'Ativo' ?
-                    `<button class="btn btn-danger" style="padding: 0.4rem 0.8rem; font-size:0.8rem;" onclick="encerrarVotacao('${data.id}')">🛑 Encerrar</button>` :
-                    `<button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size:0.8rem;" onclick="navigate('resultados-documento', '${data.id}')">📊 Ver Resultado</button>`;
+                    `<button class="btn btn-danger" style="padding: 0.4rem 0.8rem; font-size:0.8rem;" onclick="encerrarVotacao('${data.id}')">ðŸ›‘ Encerrar</button>` :
+                    `<button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size:0.8rem;" onclick="navigate('resultados-documento', '${data.id}')">ðŸ“Š Ver Resultado</button>`;
 
                 html += `
                     <tr>
@@ -569,13 +569,13 @@ async function renderAdminDocs() {
             html += `
                 <div id="modalNovoDoc" class="modal-overlay hidden">
                     <div class="modal-content">
-                        <h2 style="margin-bottom:1rem;">Novo Documento para Votação</h2>
+                        <h2 style="margin-bottom:1rem;">Novo Documento para VotaÃ§Ã£o</h2>
                         <div class="form-group">
-                            <label>Título (Ex: Enunciado 02/2026)</label>
+                            <label>TÃ­tulo (Ex: Enunciado 02/2026)</label>
                             <input type="text" id="novoDocTitulo" required>
                         </div>
                         <div class="form-group">
-                            <label>Conteúdo Integral</label>
+                            <label>ConteÃºdo Integral</label>
                             <textarea id="novoDocConteudo" rows="6" style="width:100%; padding:0.8rem; border:1px solid var(--border-color); border-radius:6px;" required></textarea>
                         </div>
                         <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
@@ -588,7 +588,7 @@ async function renderAdminDocs() {
             contentArea.innerHTML = html;
         });
     } catch (err) {
-        contentArea.innerHTML = "Erro ao carregar gestão de docs.";
+        contentArea.innerHTML = "Erro ao carregar gestÃ£o de docs.";
     }
 }
 
@@ -607,16 +607,16 @@ window.salvarNovoDoc = async () => {
             data_criacao: firebase.database.ServerValue.TIMESTAMP
         });
         document.getElementById('modalNovoDoc').classList.add('hidden');
-        showToast("✓ Documento publicado! E-mails de convocação disparados aos membros (Mock).", "success");
+        showToast("âœ“ Documento publicado! E-mails de convocaÃ§Ã£o disparados aos membros (Mock).", "success");
         renderAdminDocs();
     } catch (e) { showToast("Erro salvar documento.", "error"); }
 }
 
 window.encerrarVotacao = async (docId) => {
-    if (confirm("Deseja realmente encerrar a votação para este documento? Ninguém mais poderá votar.")) {
+    if (confirm("Deseja realmente encerrar a votaÃ§Ã£o para este documento? NinguÃ©m mais poderÃ¡ votar.")) {
         try {
             await db.ref('documents/' + docId).update({ status: 'Encerrado' });
-            showToast("Votação encerrada com sucesso!");
+            showToast("VotaÃ§Ã£o encerrada com sucesso!");
             renderAdminDocs();
         } catch (e) { showToast("Erro ao encerrar.", "error"); }
     }
@@ -625,7 +625,7 @@ window.encerrarVotacao = async (docId) => {
 async function renderAdminMembros() {
     try {
         db.ref('users').once('value', (snap) => {
-            let html = `<p style="margin-bottom:1.5rem; color:var(--text-muted)">Visualização de log de quem acessou e controle básico.</p> 
+            let html = `<p style="margin-bottom:1.5rem; color:var(--text-muted)">VisualizaÃ§Ã£o de log de quem acessou e controle bÃ¡sico.</p> 
             <div class="data-table-wrapper"><table class="data-table"><thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th></tr></thead><tbody>`;
 
             snap.forEach(usr => {
@@ -640,3 +640,6 @@ async function renderAdminMembros() {
         contentArea.innerHTML = "Erro ao carregar membros.";
     }
 }
+
+
+
