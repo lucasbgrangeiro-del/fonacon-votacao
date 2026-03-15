@@ -1,4 +1,4 @@
-﻿// app.js - LÃ³gica Principal do Sistema FONACON
+// app.js - LÃ³gica Principal do Sistema FONACON
 // Utiliza Firebase Realtime Database V9 Compat
 
 // Estado Global
@@ -320,19 +320,32 @@ async function renderAreaVoto(docId) {
             const data = docSnap.val();
             pageTitle.textContent = `Votação: ${data.titulo}`;
 
+            let pdfViewer = '';
+            if(data.pdf_base64) {
+                pdfViewer = `
+                <div style="margin-top: 1rem; border: 1px solid var(--border-color); border-radius: 6px; overflow:hidden;">
+                    <div style="background:var(--bg-light); padding: 0.5rem; text-align:center; font-weight:600; border-bottom: 1px solid var(--border-color);">
+                        📋 Anexo: ${data.pdf_name || 'Documento PDF'}
+                    </div>
+                    <iframe src="${data.pdf_base64}" style="width:100%; height:500px; border:none;" title="PDF Viewer"></iframe>
+                </div>`;
+            }
+
             let html = `
                 <div>
-                    <h3>Leia com Atenção o inteiro teor do documento abaixo:</h3>
-                    <div class="vote-content">${data.conteudo}</div>
+                    <h3 style="color:var(--primary-blue)">Leia com Atenção o inteiro teor do documento abaixo:</h3>
+                    ${data.conteudo ? `<div class="vote-content">${data.conteudo}</div>` : ''}
+                    
+                    ${pdfViewer}
 
                     <div class="vote-panel">
-                        <h3 style="margin-bottom:1rem">Registre seu Voto</h3>
-                        <p style="margin-bottom:1rem; font-size:0.9rem; color:var(--text-muted)">Atenção: A escolha da opção é irreversÃ­vel após o envio e contabilizada pelo seu ID de Usuário.</p>
+                        <h3 style="margin-bottom:1rem; color:var(--primary-blue)">Registre seu Voto</h3>
+                        <p style="margin-bottom:1rem; font-size:0.9rem; color:var(--text-muted)">Atenção: A escolha da opção é irreversível após o envio e contabilizada nominalmente pelo seu perfil.</p>
                         
                         <div class="vote-actions" id="voteButtonGroup">
-                            <button class="vote-btn favoravel" data-opcao="Favorável">ðŸ‘ Favorável</button>
-                            <button class="vote-btn contrario" data-opcao="Contrário">ðŸ‘Ž Contrário</button>
-                            <button class="vote-btn ressalva" data-opcao="Ressalva">âœ‹ Com Ressalva</button>
+                            <button class="vote-btn favoravel" data-opcao="Favorável">👍 Favorável</button>
+                            <button class="vote-btn contrario" data-opcao="Contrário">👎 Contrário</button>
+                            <button class="vote-btn ressalva" data-opcao="Ressalva">✋ Com Ressalva</button>
                         </div>
 
                         <div class="justificativa-area hidden" id="justArea">
@@ -575,12 +588,18 @@ async function renderAdminDocs() {
                             <input type="text" id="novoDocTitulo" required>
                         </div>
                         <div class="form-group">
-                            <label>Conteúdo Integral</label>
-                            <textarea id="novoDocConteudo" rows="6" style="width:100%; padding:0.8rem; border:1px solid var(--border-color); border-radius:6px;" required></textarea>
+                            <label>Conteúdo Integral (Opcional se houver PDF)</label>
+                            <textarea id="novoDocConteudo" rows="4" style="width:100%; padding:0.8rem; border:1px solid var(--border-color); border-radius:6px;"></textarea>
+                        </div>
+                        <div class="form-group" style="margin-top:1rem;">
+                            <label>Anexar Arquivo PDF (Tamanho Máximo: 2MB)</label>
+                            <input type="file" id="novoDocPDF" accept="application/pdf" style="display:block; margin-top:0.5rem;"/>
+                            <small style="color:var(--text-muted)">O arquivo será armazenado com segurança para leitura imersiva da classe.</small>
                         </div>
                         <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
                             <button class="btn btn-logout" onclick="document.getElementById('modalNovoDoc').classList.add('hidden')">Cancelar</button>
-                            <button class="btn btn-primary" onclick="salvarNovoDoc()">Publicar e Convocar Membros</button>
+                            <button class="btn btn-primary" onclick="salvarNovoDoc(false)" style="background:var(--secondary-green)">Apenas Publicar</button>
+                            <button class="btn btn-primary" onclick="salvarNovoDoc(true)">Publicar e Convocar Membros</button>
                         </div>
                     </div>
                 </div>
@@ -592,22 +611,57 @@ async function renderAdminDocs() {
     }
 }
 
-window.abrirModalDoc = () => { document.getElementById('modalNovoDoc').classList.remove('hidden'); }
-window.salvarNovoDoc = async () => {
+window.abrirModalDoc = () => { 
+    document.getElementById('modalNovoDoc').classList.remove('hidden');
+    document.getElementById('novoDocTitulo').value = '';
+    document.getElementById('novoDocConteudo').value = '';
+    document.getElementById('novoDocPDF').value = '';
+}
+
+window.salvarNovoDoc = async (bConvocar) => {
     const titulo = document.getElementById('novoDocTitulo').value;
     const cont = document.getElementById('novoDocConteudo').value;
-    if (!titulo || !cont) { showToast("Preencha todos os campos", "error"); return; }
+    const fileInput = document.getElementById('novoDocPDF');
+    
+    if (!titulo && (!cont && fileInput.files.length === 0)) { 
+        showToast("Preencha título e anexe conteúdo ou PDF", "error"); 
+        return; 
+    }
 
     try {
+        let pdfBase64 = null;
+        let pdfName = null;
+        
+        if(fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            if(file.size > 2 * 1024 * 1024) {
+                showToast("Erro: Arquivo excede 2MB.", "error"); return;
+            }
+            pdfName = file.name;
+            const reader = new FileReader();
+            pdfBase64 = await new Promise((resolve) => {
+                reader.onload = () => resolve(reader.result);
+                reader.readAsDataURL(file);
+            });
+        }
+
         const newRef = db.ref('documents').push();
         await newRef.set({
             titulo: titulo,
             conteudo: cont,
+            pdf_base64: pdfBase64,
+            pdf_name: pdfName,
             status: 'Ativo',
             data_criacao: firebase.database.ServerValue.TIMESTAMP
         });
         document.getElementById('modalNovoDoc').classList.add('hidden');
-        showToast("âœ“ Documento publicado! E-mails de convocação disparados aos membros (Mock).", "success");
+        
+        if (bConvocar) {
+            showToast("✓ Documento publicado! E-mails de convocação disparados aos membros (Mock).", "success");
+        } else {
+            showToast("✓ Documento publicado silenciosamente.", "success");
+        }
+        
         renderAdminDocs();
     } catch (e) { showToast("Erro salvar documento.", "error"); }
 }
@@ -622,22 +676,111 @@ window.encerrarVotacao = async (docId) => {
     }
 }
 
+// ==== MEMBROS E CONTROLE DE BASE ====
 async function renderAdminMembros() {
+    topbarActions.innerHTML = `<button class="btn btn-success" onclick="abrirModalAddMembro()">+ Novo Membro</button>`;
+
     try {
         db.ref('users').once('value', (snap) => {
-            let html = `<p style="margin-bottom:1.5rem; color:var(--text-muted)">Visualização de log de quem acessou e controle básico.</p> 
-            <div class="data-table-wrapper"><table class="data-table"><thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th></tr></thead><tbody>`;
+            let html = `<p style="margin-bottom:1.5rem; color:var(--text-muted)">Controle total da base de usuários.</p> 
+            <div class="data-table-wrapper"><table class="data-table"><thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th style="text-align:right">Ações</th></tr></thead><tbody>`;
 
             snap.forEach(usr => {
                 const data = usr.val();
-                const badge = data.perfil === 'Admin' ? `<span class="badge" style="background:var(--danger);color:white">Admin</span>` : `<span class="badge">Membro</span>`;
-                html += `<tr><td>${data.nome}</td><td>${data.email}</td><td>${badge}</td></tr>`;
+                const badge = data.perfil === 'Admin' ? `<span class="badge" style="background:var(--danger);color:white">Admin</span>` : `<span class="badge" style="background:var(--primary-blue);color:white">Membro</span>`;
+                html += `<tr>
+                    <td><strong>${data.nome}</strong></td>
+                    <td>${data.email}</td>
+                    <td>${badge}</td>
+                    <td style="text-align:right">
+                        <button class="btn btn-secondary" style="font-size:0.75rem; padding:0.3rem 0.6rem;" onclick="resetarSenhaMembro('${usr.key}')">Reset Senha</button>
+                        <button class="btn btn-danger" style="font-size:0.75rem; padding:0.3rem 0.6rem;" onclick="excluirMembro('${usr.key}')">Excluir</button>
+                    </td>
+                </tr>`;
             });
             html += '</tbody></table></div>';
+            
+            // Modal de Adição de Membro
+            html += `
+                <div id="modalAddMembro" class="modal-overlay hidden">
+                    <div class="modal-content" style="max-width: 400px;">
+                        <h2 style="margin-bottom:1rem; color:var(--primary-blue)">Cadastrar Novo Membro</h2>
+                        <div class="form-group">
+                            <label>Nome Completo</label>
+                            <input type="text" id="addMemNome" required>
+                        </div>
+                        <div class="form-group">
+                            <label>E-mail de Acesso</label>
+                            <input type="email" id="addMemEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Senha Inicial</label>
+                            <input type="text" id="addMemSenha" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Perfil (Nível de Acesso)</label>
+                            <select id="addMemPerfil" style="width:100%; padding:0.8rem; border-radius:6px; font-family:inherit;">
+                                <option value="Membro">Membro</option>
+                                <option value="Admin">Administrador</option>
+                            </select>
+                        </div>
+                        <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
+                            <button class="btn btn-logout" onclick="document.getElementById('modalAddMembro').classList.add('hidden')">Cancelar</button>
+                            <button class="btn btn-primary" onclick="salvarNovoMembro()">Finalizar Cadastro</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
             contentArea.innerHTML = html;
         });
     } catch (err) {
         contentArea.innerHTML = "Erro ao carregar membros.";
+    }
+}
+
+window.abrirModalAddMembro = () => { document.getElementById('modalAddMembro').classList.remove('hidden'); }
+
+window.salvarNovoMembro = async () => {
+    const nome = document.getElementById('addMemNome').value.trim();
+    const email = document.getElementById('addMemEmail').value.trim();
+    const senha = document.getElementById('addMemSenha').value.trim();
+    const perfil = document.getElementById('addMemPerfil').value;
+
+    if(!nome || !email || !senha) { showToast("Preencha todos os campos do membro.", "error"); return; }
+
+    try {
+        const newRef = db.ref('users').push(); // Cria um hash único aleatorio
+        await newRef.set({
+            nome: nome,
+            email: email,
+            senha: senha,
+            perfil: perfil
+        });
+        showToast("✓ Membro adicionado com sucesso!", "success");
+        renderAdminMembros();
+    } catch(err) {
+        showToast("Erro ao adicionar membro.", "error");
+    }
+}
+
+window.resetarSenhaMembro = async (userId) => {
+    const nova = prompt("Digite a NOVA SENHA para este usuário:");
+    if(!nova || nova.trim() === '') return;
+    
+    try {
+        await db.ref('users/' + userId).update({ senha: nova.trim() });
+        showToast("Senha redefinida com sucesso!");
+    } catch(e) { showToast("Erro ao redefinir senha.", "error"); }
+}
+
+window.excluirMembro = async (userId) => {
+    if(confirm("ATENÇÃO: Deseja realmente excluir este membro definitivamente do sistema?")) {
+        try {
+            await db.ref('users/' + userId).remove();
+            showToast("Membro removido da base de dados.");
+            renderAdminMembros();
+        } catch(e) { showToast("Erro ao excluir.", "error"); }
     }
 }
 
