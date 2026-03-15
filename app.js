@@ -1,4 +1,4 @@
-// app.js - LÃ³gica Principal do Sistema FONACON
+﻿// app.js - Lógica Principal do Sistema FONACON
 // Utiliza Firebase Realtime Database V9 Compat
 
 // Estado Global
@@ -28,7 +28,7 @@ function showToast(msg, type = 'success') {
 }
 
 // ==========================================
-// MOCK DATA DE INITIALIZAÃ‡ÃƒO
+// MOCK DATA DE INITIALIZAÇÃO
 // ==========================================
 async function seedDatabase() {
     const usersRef = db.ref('users');
@@ -46,7 +46,7 @@ async function seedDatabase() {
 
             // Criar Membros
             db.ref('users/membro_1').set({
-                nome: 'JoÃ£o da Silva (Procurador)',
+                nome: 'João da Silva (Procurador)',
                 email: 'joao@fonacon.com.br',
                 senha: '123',
                 perfil: 'Membro'
@@ -63,7 +63,7 @@ async function seedDatabase() {
             const newDocRef = db.ref('documents').push();
             newDocRef.set({
                 titulo: 'Enunciado 01/2026 - Uso de IA',
-                conteudo: 'Proposta: O uso de InteligÃªncia Artificial para elaboraÃ§Ã£o de peÃ§as processuais deve ser precedido de validaÃ§Ã£o humana e seguir diretrizes de seguranÃ§a da informaÃ§Ã£o institucional.',
+                conteudo: 'Proposta: O uso de Inteligência Artificial para elaboração de peças processuais deve ser precedido de validação humana e seguir diretrizes de segurança da informação institucional.',
                 status: 'Ativo',
                 data_criacao: firebase.database.ServerValue.TIMESTAMP
             });
@@ -75,7 +75,7 @@ seedDatabase().catch(err => console.error("Erro no Seed:", err));
 
 
 // ==========================================
-// AUTENTICAÃ‡ÃƒO E ROTEAMENTO
+// AUTENTICAÇÃO E ROTEAMENTO
 // ==========================================
 loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -98,7 +98,7 @@ loginForm.addEventListener('submit', async (e) => {
                 initApp();
                 showToast('Login realizado com sucesso!');
             } else {
-                showToast('E-mail ou senha invÃ¡lidos!', 'error');
+                showToast('E-mail ou senha inválidos!', 'error');
             }
         });
     } catch (error) {
@@ -134,14 +134,14 @@ function buildMenu() {
 
     const dashboardItem = document.createElement('div');
     dashboardItem.className = 'nav-item active';
-    dashboardItem.innerHTML = 'ðŸ“Š Dashboard Geral';
+    dashboardItem.innerHTML = '📊 Dashboard Geral';
     dashboardItem.onclick = () => { setActiveMenu(dashboardItem); navigate('dashboard'); };
     sidebarNav.appendChild(dashboardItem);
 
     if (currentUser.perfil === 'Membro') {
         const docAtivosItem = document.createElement('div');
         docAtivosItem.className = 'nav-item';
-        docAtivosItem.innerHTML = 'ðŸ“ Docs em DeliberaÃ§Ã£o';
+        docAtivosItem.innerHTML = 'ðŸ„ Docs em DeliberaÃ§Ã£o';
         docAtivosItem.onclick = () => { setActiveMenu(docAtivosItem); navigate('docs-deliberacao'); };
         sidebarNav.appendChild(docAtivosItem);
     }
@@ -149,20 +149,20 @@ function buildMenu() {
     if (currentUser.perfil === 'Admin') {
         const gestaoItem = document.createElement('div');
         gestaoItem.className = 'nav-item';
-        gestaoItem.innerHTML = 'âš™ Gestão de Documentos';
+        gestaoItem.innerHTML = '⚙️ Gestão de Documentos';
         gestaoItem.onclick = () => { setActiveMenu(gestaoItem); navigate('admin-docs'); };
         sidebarNav.appendChild(gestaoItem);
 
         const membrosItem = document.createElement('div');
         membrosItem.className = 'nav-item';
-        membrosItem.innerHTML = 'ðŸ‘¥ Controle de Membros';
+        membrosItem.innerHTML = '👥 Controle de Membros';
         membrosItem.onclick = () => { setActiveMenu(membrosItem); navigate('admin-membros'); };
         sidebarNav.appendChild(membrosItem);
     }
 
     const docEncerradosItem = document.createElement('div');
     docEncerradosItem.className = 'nav-item';
-    docEncerradosItem.innerHTML = 'âœ… Documentos Deliberados';
+    docEncerradosItem.innerHTML = '✅ Documentos Deliberados';
     docEncerradosItem.onclick = () => { setActiveMenu(docEncerradosItem); navigate('docs-encerrados'); };
     sidebarNav.appendChild(docEncerradosItem);
 }
@@ -182,7 +182,7 @@ function navigate(route, params = null) {
             renderDashboard();
             break;
         case 'docs-deliberacao':
-            pageTitle.textContent = 'Documentos em DeliberaÃ§Ã£o';
+            pageTitle.textContent = 'Documentos em Deliberação';
             renderDocsDeliberacao();
             break;
         case 'votar-documento':
@@ -204,7 +204,7 @@ function navigate(route, params = null) {
             renderAdminMembros();
             break;
         default:
-            contentArea.innerHTML = '<h2>PÃ¡gina Não encontrada</h2>';
+            contentArea.innerHTML = '<h2>Página Não encontrada</h2>';
     }
 }
 
@@ -503,7 +503,7 @@ async function renderResultadoDocumento(docId) {
                         <h3 style="margin-bottom: 1rem;">Painel Consolidado de Votos</h3>
                         <div class="stats-grid">
                             <div class="stat-card" style="border-top: 4px solid var(--secondary-green)">
-                                <div class="stat-value" style="color:var(--secondary-green)">${consolidador['Favorável']}</div><div class="stat-label">Votos FavorÃ¡veis</div>
+                                <div class="stat-value" style="color:var(--secondary-green)">${consolidador['Favorável']}</div><div class="stat-label">Votos Favoráveis</div>
                             </div>
                             <div class="stat-card" style="border-top: 4px solid var(--danger)">
                                 <div class="stat-value" style="color:var(--danger)">${consolidador['Contrário']}</div><div class="stat-label">Votos Contrários</div>
@@ -566,8 +566,8 @@ async function renderAdminDocs() {
             docsArray.forEach(data => {
                 const badge = data.status === 'Ativo' ? '<span class="status-badge status-ativo">Em Votação</span>' : '<span class="status-badge status-encerrado">Encerrado</span>';
                 const actionBtn = data.status === 'Ativo' ?
-                    `<button class="btn btn-danger" style="padding: 0.4rem 0.8rem; font-size:0.8rem;" onclick="encerrarVotacao('${data.id}')">ðŸ›‘ Encerrar</button>` :
-                    `<button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size:0.8rem;" onclick="navigate('resultados-documento', '${data.id}')">ðŸ“Š Ver Resultado</button>`;
+                    `<button class="btn btn-danger" style="padding: 0.4rem 0.8rem; font-size:0.8rem;" onclick="encerrarVotacao('${data.id}')">🛑 Encerrar</button>` :
+                    `<button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size:0.8rem;" onclick="navigate('resultados-documento', '${data.id}')">📊 Ver Resultado</button>`;
 
                 html += `
                     <tr>
